@@ -98,22 +98,22 @@ static int S_render_node(cmark_node *node, cmark_event_type ev_type,
     if (entering) {
       cr(html);
       if (list_type == CMARK_BULLET_LIST) {
-        cmark_strbuf_puts(html, "<ul");
+        cmark_strbuf_puts(html, "<div class=\"content\"><ul");
         S_render_sourcepos(node, html, options);
         cmark_strbuf_puts(html, ">\n");
       } else if (start == 1) {
-        cmark_strbuf_puts(html, "<ol");
+        cmark_strbuf_puts(html, "<div class=\"content\"><ol");
         S_render_sourcepos(node, html, options);
         cmark_strbuf_puts(html, ">\n");
       } else {
-        snprintf(buffer, BUFFER_SIZE, "<ol start=\"%d\"", start);
+        snprintf(buffer, BUFFER_SIZE, "<div class=\"content\"><ol start=\"%d\"", start);
         cmark_strbuf_puts(html, buffer);
         S_render_sourcepos(node, html, options);
         cmark_strbuf_puts(html, ">\n");
       }
     } else {
       cmark_strbuf_puts(html,
-                        list_type == CMARK_BULLET_LIST ? "</ul>\n" : "</ol>\n");
+                        list_type == CMARK_BULLET_LIST ? "</ul></div>\n" : "</ol></div>\n");
     }
     break;
   }
@@ -134,6 +134,9 @@ static int S_render_node(cmark_node *node, cmark_event_type ev_type,
       cr(html);
       start_heading[2] = (char)('0' + node->as.heading.level);
       cmark_strbuf_puts(html, start_heading);
+      cmark_strbuf_puts(html, " class=\"title is-");
+      cmark_strbuf_puts(html, &start_heading[2]);
+      cmark_strbuf_puts(html, "\"");
       S_render_sourcepos(node, html, options);
       cmark_strbuf_putc(html, '>');
     } else {
@@ -207,7 +210,7 @@ static int S_render_node(cmark_node *node, cmark_event_type ev_type,
     if (!tight) {
       if (entering) {
         cr(html);
-        cmark_strbuf_puts(html, "<p");
+        cmark_strbuf_puts(html, "<p class=\"subtitle\"");
         S_render_sourcepos(node, html, options);
         cmark_strbuf_putc(html, '>');
       } else {
